@@ -1,0 +1,15 @@
+# Entorno virtual de Python
+.venv/
+
+# Archivos de caché de Python
+__pycache__/
+*.pyc
+
+# Archivos de compilación de PyInstaller
+dist/
+build/
+*.spec
+
+# Archivos de depuración y ejecutables
+*.png
+*.exe
