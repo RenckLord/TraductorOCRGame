@@ -6,12 +6,7 @@ from typing import Optional, Tuple
 
 class AreaSelector:
     def __init__(self, root: tk.Tk):
-        """
-        Inicializa el selector de área.
 
-        Args:
-            root (tk.Tk): Ventana raíz de Tkinter
-        """
         self.root = root
         self.root.attributes("-fullscreen", True)
         self.root.attributes("-alpha", 0.3)

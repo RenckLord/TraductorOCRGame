@@ -14,12 +14,7 @@ from traductorocr.core.config import TARGET_LANGUAGE, INVERSE_TARGET_LANGUAGE, T
 
 class TranslatorLogic:
     def __init__(self, ui):
-        """
-        Inicializa la lógica del traductor.
 
-        Args:
-            ui (TranslatorUI): Instancia de la interfaz de usuario
-        """
         self.ui = ui
         self.setup_bindings()
 
@@ -121,12 +116,7 @@ class TranslatorLogic:
         ).start()
 
     def _inverse_translate_task(self, text):
-        """
-        Realiza la traducción inversa en un hilo separado.
-        
-        Args:
-            text (str): Texto a traducir
-        """
+
         try:
             translator = GoogleTranslator(source='es', target=INVERSE_TARGET_LANGUAGE)
             translated_text = translator.translate(text)

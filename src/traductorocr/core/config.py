@@ -1,6 +1,4 @@
-"""
-Configuración global de la aplicación
-"""
+
 
 # Configuración de la ventana
 DEFAULT_WINDOW_WIDTH = 350

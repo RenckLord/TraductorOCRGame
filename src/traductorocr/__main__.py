@@ -1,6 +1,4 @@
-"""
-Módulo principal de ejecución
-"""
+
 import os
 import sys
 import tkinter as tk
@@ -41,7 +39,6 @@ def setup_environment() -> str:
     return font_path
 
 def main() -> None:
-    """Función principal que inicia la aplicación"""
     font_path = setup_environment()
     
     root = tk.Tk()
