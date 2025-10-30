@@ -1,0 +1,2 @@
+[console_scripts]
+traductorocr = traductorocr.__main__:main
