@@ -11,11 +11,17 @@ from deep_translator import GoogleTranslator
 
 from traductorocr.ui.area_selector import AreaSelector
 from traductorocr.core.config import TARGET_LANGUAGE, INVERSE_TARGET_LANGUAGE, THRESHOLD_VALUE
+from traductorocr.core.audio_translator import AudioTranslator
 
 class TranslatorLogic:
     def __init__(self, ui):
-
         self.ui = ui
+        self.audio_translator = AudioTranslator(
+            on_translation=self._on_audio_translation,
+            on_error=self._on_audio_error
+        )
+        self.is_capturing_audio = False
+        self.selected_device_id = None
         self.setup_bindings()
 
     def setup_bindings(self):
@@ -25,6 +31,8 @@ class TranslatorLogic:
         self.ui.color_button.config(command=self.change_text_color)
         self.ui.expand_button.config(command=self.ui.toggle_expand)
         self.ui.inverse_button.config(command=self.run_inverse_translation)
+        self.ui.audio_capture_button.config(command=self.toggle_audio_capture)
+        self.ui.device_selector.bind('<<ComboboxSelected>>', self._on_device_selected)
 
     def start_capture_process(self):
         """Inicia el proceso de captura de área"""
@@ -116,7 +124,6 @@ class TranslatorLogic:
         ).start()
 
     def _inverse_translate_task(self, text):
-
         try:
             translator = GoogleTranslator(source='es', target=INVERSE_TARGET_LANGUAGE)
             translated_text = translator.translate(text)
@@ -124,3 +131,42 @@ class TranslatorLogic:
         except Exception as e:
             error_msg = f"Error: {e}"
             self.ui.root.after(0, self.ui.show_inverse_result, error_msg)
+            
+    def _on_device_selected(self, event=None):
+        """Maneja la selección de un nuevo dispositivo de audio"""
+        device_id = self.ui.get_selected_device_id()
+        if device_id is not None:
+            print(f"Dispositivo seleccionado: {device_id}")
+            self.selected_device_id = device_id
+            self.audio_translator.set_audio_device(device_id)
+            
+    def toggle_audio_capture(self):
+        """Alterna entre iniciar/detener la captura de audio"""
+        if not self.selected_device_id:
+            self.ui.audio_status_value.config(text="Inactivo - Seleccione un dispositivo")
+            return
+            
+        if self.is_capturing_audio:
+            self.audio_translator.stop_capture()
+            self.is_capturing_audio = False
+            self.ui.audio_capture_button.config(text="Iniciar Captura de Audio")
+            self.ui.audio_status_value.config(text="Inactivo", foreground="red")
+        else:
+            try:
+                self.audio_translator.start_capture()
+                self.is_capturing_audio = True
+                self.ui.audio_capture_button.config(text="Detener Captura")
+                self.ui.audio_status_value.config(text="Capturando...", foreground="green")
+            except Exception as e:
+                self.ui.audio_status_value.config(text=f"Error: {str(e)}", foreground="red")
+            
+    def _on_audio_translation(self, translation):
+        """Callback para cuando hay una nueva traducción de audio"""
+        self.ui.subtitles_text.config(state='normal')
+        self.ui.subtitles_text.delete('1.0', 'end')
+        self.ui.subtitles_text.insert('1.0', translation)
+        self.ui.subtitles_text.config(state='disabled')
+        
+    def _on_audio_error(self, error):
+        """Callback para cuando hay un error en la traducción de audio"""
+        self.ui.audio_status_label.config(text=f"Error: {error}")

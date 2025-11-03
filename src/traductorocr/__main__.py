@@ -18,6 +18,10 @@ def setup_environment() -> str:
     Returns:
         str: Ruta a la fuente personalizada o None si no se encuentra
     """
+    # Descargar modelo de voz si es necesario
+    from traductorocr.utils.voice_models import download_vosk_model
+    download_vosk_model()
+
     if getattr(sys, 'frozen', False):
         # Configurar Tesseract para aplicación congelada
         tesseract_path = resource_path('Tesseract-OCR')
