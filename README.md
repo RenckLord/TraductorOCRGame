@@ -181,7 +181,7 @@ Instala las dependencias:
 Bash
 
 pip install -r requirements.txt
-⚠️ Configuración OBLIGATORIA para Traducción de Audio del Sistema ⚠️
+## ⚠️ Configuración OBLIGATORIA para Traducción de Audio del Sistema ⚠️
 Para traducir el audio de tu juego (y no tu voz), la aplicación necesita "escuchar" la salida de audio de tu PC. Dispositivos como "Mezcla estéreo" (Stereo Mix) a veces fallan o no existen (especialmente en portátiles o con auriculares USB como HyperX).
 
 La solución más robusta es usar un cable de audio virtual.
@@ -217,7 +217,7 @@ En el menú "Reproducir a través de este dispositivo", selecciona tus audífono
 
 Pulsa "Aplicar". Ahora deberías volver a escuchar el audio de tu PC.
 
-Configurar el TraductorOCR:
+## Configurar el TraductorOCR:
 
 Inicia la aplicación.
 
@@ -229,7 +229,7 @@ Inicia la captura.
 
 
 ## Estructura del Proyecto
-
+```
 TraductorOCRGame/
 │
 ├── src/
@@ -244,3 +244,4 @@ TraductorOCRGame/
 ├── setup.py              # Configuración del paquete
 ├── requirements.txt      # Dependencias
 └── README.md             # Este archivo
+```
