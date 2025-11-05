@@ -125,7 +125,13 @@ class TranslatorUI:
             self.settings_frame,
             text="Color Texto"
         )
-        self.color_button.grid(row=0, column=2, padx=(10, 0))
+        # --- NUEVO BOTÓN DE AJUSTE OCR ---
+        self.ocr_tuner_button = ttk.Button(
+            self.settings_frame,
+            text="Ajustar OCR"
+        )
+        self.ocr_tuner_button.grid(row=0, column=3, padx=(5, 0)) # <--- NUEVO
+        # --- FIN DE CAMBIO ---
         
         self.settings_frame.columnconfigure(1, weight=1)
 

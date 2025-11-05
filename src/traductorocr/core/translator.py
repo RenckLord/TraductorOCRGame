@@ -12,6 +12,7 @@ from deep_translator import GoogleTranslator
 from traductorocr.ui.area_selector import AreaSelector
 from traductorocr.core.config import TARGET_LANGUAGE, INVERSE_TARGET_LANGUAGE, THRESHOLD_VALUE
 from traductorocr.core.audio_translator import AudioTranslator
+from traductorocr.ui.ocr_tuner import OcrTuner  
 
 class TranslatorLogic:
     def __init__(self, ui):
@@ -22,6 +23,10 @@ class TranslatorLogic:
         )
         self.is_capturing_audio = False
         self.selected_device_id = None
+        
+        self.ocr_threshold = THRESHOLD_VALUE  # Valor por defecto (80)
+        self.ocr_invert = False               # Por defecto, no invertido
+        
         self.setup_bindings()
 
     def setup_bindings(self):
@@ -33,6 +38,7 @@ class TranslatorLogic:
         self.ui.inverse_button.config(command=self.run_inverse_translation)
         self.ui.audio_capture_button.config(command=self.toggle_audio_capture)
         self.ui.device_selector.bind('<<ComboboxSelected>>', self._on_device_selected)
+        self.ui.ocr_tuner_button.config(command=self.open_ocr_settings)
 
     def start_capture_process(self):
         """Inicia el proceso de captura de área"""
@@ -68,8 +74,12 @@ class TranslatorLogic:
             # Procesar imagen
             img_np = np.array(sct_img)
             gray_img = cv2.cvtColor(img_np, cv2.COLOR_BGRA2GRAY)
-            _, processed_img = cv2.threshold(gray_img, THRESHOLD_VALUE, 255, cv2.THRESH_BINARY)
-            
+         
+            thresh_mode = cv2.THRESH_BINARY_INV if self.ocr_invert else cv2.THRESH_BINARY
+
+            _, processed_img = cv2.threshold(gray_img, self.ocr_threshold, 255, thresh_mode)
+
+          
             # OCR
             text_from_ocr = pytesseract.image_to_string(processed_img, lang='eng')
             results = text_from_ocr.split('\n')
@@ -170,3 +180,59 @@ class TranslatorLogic:
     def _on_audio_error(self, error):
         """Callback para cuando hay un error en la traducción de audio"""
         self.ui.audio_status_label.config(text=f"Error: {error}")
+        
+    def open_ocr_settings(self):
+        """
+        Inicia el proceso de selección de área y abre la ventana de ajuste de OCR.
+        """
+        # 1. Ocultar la ventana principal para que no estorbe
+        self.ui.root.withdraw()
+        
+        # 2. Pedir al usuario que seleccione un área (reutilizamos AreaSelector)
+        selector_root = tk.Toplevel(self.ui.root)
+        app = AreaSelector(selector_root)
+        selector_root.wait_window()
+        box = app.selection_box
+        
+        # 3. Si no seleccionó nada, simplemente volvemos
+        if not box:
+            self.ui.root.deiconify() # Volver a mostrar la ventana principal
+            return
+
+        # 4. Si seleccionó, tomar UNA captura de esa área como muestra
+        try:
+            monitor = {
+                "top": int(box[1]), 
+                "left": int(box[0]), 
+                "width": int(box[2]), 
+                "height": int(box[3])
+            }
+            with mss() as sct:
+                sct_img = sct.grab(monitor)
+            
+            # Convertir la imagen de mss a un formato que OpenCV entienda (np.ndarray)
+            sample_image = np.array(sct_img)
+            
+            # 5. Volver a mostrar la ventana principal ANTES de abrir el afinador
+            self.ui.root.deiconify()
+
+            # 6. Abrir la ventana del afinador (OcrTuner)
+            tuner = OcrTuner(
+                parent=self.ui.root,
+                sample_image=sample_image,
+                initial_threshold=self.ocr_threshold,
+                initial_invert=self.ocr_invert
+            )
+            
+            # 7. 'show()' bloqueará la ejecución hasta que el usuario guarde y cierre
+            new_settings = tuner.show()
+            
+            # 8. Actualizar nuestras variables con los nuevos ajustes
+            self.ocr_threshold = new_settings["threshold"]
+            self.ocr_invert = new_settings["invert"]
+            
+            print(f"Nuevos ajustes de OCR guardados: Umbral={self.ocr_threshold}, Invertir={self.ocr_invert}")
+
+        except Exception as e:
+            print(f"Error al abrir el afinador de OCR: {e}")
+            self.ui.root.deiconify() # Asegurarse de que la ventana vuelva si hay un error
