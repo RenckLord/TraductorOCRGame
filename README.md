@@ -25,27 +25,27 @@ TraductorOCRGame combina un potente motor de OCR con el reconocimiento de voz de
 
 ---
 
-## 📋 Requisitos
+##  Requisitos
 
-#### 🧑‍💻 Para Usuarios (EXE)
+#### Para Usuarios (EXE)
 * Windows 10 / 11.
 * (Opcional pero recomendado) [**VB-CABLE Virtual Audio Device**](https://vb-audio.com/Cable/) (para la traducción de audio del sistema).
 
-#### 👩‍🔬 Para Desarrolladores
+#### Para Desarrolladores
 * Python 3.8+
 * Tesseract OCR (instalado y en el PATH del sistema).
 * Todas las dependencias listadas en `requirements.txt`.
 
 ---
 
-## 📦 Instalación
+##  Instalación
 
-#### 🧑‍💻 Para Usuarios
+####  Para Usuarios
 1.  Ve a la [**página de Releases**](https://github.com/RenckLord/TraductorOCRGame/releases) de este repositorio.
 2.  Descarga el `TraductorOCR.exe` de la última versión.
 3.  Ejecuta el archivo. (No requiere instalación).
 
-#### 👩‍🔬 Para Desarrolladores
+####  Para Desarrolladores
 1.  Clona el repositorio:
     ```bash
     git clone [https://github.com/RenckLord/TraductorOCRGame.git](https://github.com/RenckLord/TraductorOCRGame.git)
@@ -68,7 +68,7 @@ TraductorOCRGame combina un potente motor de OCR con el reconocimiento de voz de
 
 ---
 
-## ⚠️ Configuración OBLIGATORIA para Audio del Sistema ⚠️
+## ⚠️ Configuración OBLIGATORIA para Audio del Sistema 
 
 > Para traducir el audio de tu juego (y no tu voz), la aplicación necesita "escuchar" la salida de audio de tu PC. Dispositivos como "Mezcla estéreo" (Stereo Mix) a veces fallan o no existen (especialmente en portátiles o con auriculares USB como HyperX).
 >
@@ -105,7 +105,6 @@ TraductorOCRGame combina un potente motor de OCR con el reconocimiento de voz de
 
 ## 📂 Estructura del Proyecto
 
-## Estructura del Proyecto
 ```
 TraductorOCRGame/
 │
